@@ -1,0 +1,86 @@
+---
+  - name: Deallocate virtual machine
+    azure_rm_virtualmachine:
+      resource_group: "{{ azure_resource_group_name }}"
+      name: "{{ azure_virtual_machine_name }}"
+      allocated: false
+    tags: always
+
+  - name: Get the virtual machine os disk info
+    azure_rm_manageddisk_info:
+      resource_group: "{{ azure_resource_group_name }}"
+      name: "{{ azure_virtual_machine_os_disk_name }}"
+    register: os_disk_info
+    tags: always
+
+  - name: Create a snapshot of the virtual machine os disk
+    azure_rm_snapshot:
+      resource_group: "{{ azure_resource_group_name }}"
+      name: "{{ azure_snapshot_name }}"
+      location: "{{ azure_resource_group_location }}"
+      creation_data:
+        create_option: Copy
+        source_id: "{{ os_disk_info.ansible_info.azure_managed_disk[0].id }}"
+    register: snapshot_info
+    tags: always
+
+  - name: Create an azure compute gallery
+    azure_rm_gallery:
+      resource_group: "{{ azure_resource_group_name }}"
+      name: "{{ azure_compute_gallery_name }}"
+      location: "{{ azure_resource_group_location }}"
+      description: "{{ azure_compute_gallery_description }}"
+    tags: always
+
+  - name: Create gallery image definition
+    azure_rm_galleryimage:
+      resource_group: "{{ azure_resource_group_name }}"
+      gallery_name: "{{ azure_compute_gallery_name }}"
+      name: "{{ azure_gallery_image_name }}"
+      location: "{{ azure_resource_group_location }}"
+      os_type: "{{ azure_virtual_machine_os_type}}"
+      os_state: "{{ azure_virtual_machine_os_state }}"
+      identifier:
+        publisher: "{{ azure_virtual_machine_image_publisher}}"
+        offer: "{{ azure_virtual_machine_image_offer }}"
+        sku: "{{ azure_virtual_machine_image_sku }}"
+    tags: always
+
+  - name: Create gallery image version
+    azure_rm_galleryimageversion:
+      resource_group: "{{ azure_resource_group_name }}"
+      gallery_name: "{{ azure_compute_gallery_name }}"
+      gallery_image_name: "{{ azure_gallery_image_name }}"
+      name: "{{ azure_gallery_image_version }}"
+      location: "{{ azure_resource_group_location }}"
+      storage_profile:
+        os_disk:
+          source: "{{ snapshot_info.id }}"
+    ignore_errors: true
+    tags: always
+
+  - name: Checking for the gallery image version state
+    azure_rm_galleryimageversion_info:
+      resource_group: "{{ azure_resource_group_name }}"
+      gallery_name: "{{ azure_compute_gallery_name }}"
+      gallery_image_name: "{{ azure_gallery_image_name }}"
+      name: "{{ azure_gallery_image_version }}"
+    register: gallery_image_version_state
+    until: gallery_image_version_state.versions.provisioning_state == 'Failed' or gallery_image_version_state.versions.provisioning_state == 'Succeeded'
+    retries: 30
+    delay: 30
+    tags: always
+  
+  - name: Fail the task if the gallery image version is not in Succeeded state
+    fail:
+      msg: "Gallery image version is not in Succeeded state. Please delete it and run the playbook again."
+    when: gallery_image_version_state.versions.provisioning_state != 'Succeeded'
+    tags: always
+
+  - name: Display result if image was successfully created
+    debug:
+      msg: "Golden Image created successfully"                  # Maybe display other details about the deployment similar to how we did it for DSC. Can be done in a separate YAML file
+    tags: always
+    
+
+  

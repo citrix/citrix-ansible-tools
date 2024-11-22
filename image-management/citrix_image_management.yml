@@ -1,0 +1,42 @@
+---
+# Create Golden Image
+- name: Create Azure VM
+  hosts: localhost
+  connection: local
+  vars:
+    virtual_machine_exclusive_tags:
+      - win10_desktop
+      - win11_desktop
+      - win10_server
+      - win11_server
+      - office_10_vm
+      - office_11_vm
+      - win_2019_dc_vm
+      - win_2022_dc_vm
+  roles:
+    - role: create_azure_windows_vm
+      when: create_azure_windows_vm | bool
+    - azure_add_host_to_inventory
+
+- name: Configure VDA
+  hosts: windows_vms
+  gather_facts: False
+  vars:
+    vda_exclusive_tags:
+      - single_session_vda
+      - multi_session_vda
+    version_exclusive_tags:
+      - v2407
+  roles:
+    - role: install_mcs_vda
+      when: install_mcs_vda | bool
+    - role: optimize_image
+      when: optimize_image | bool
+    - install_default_apps
+
+- name: Generate Golden Image
+  hosts: localhost
+  connection: local
+  roles:
+    - role: generate_golden_image
+      when: generate_golden_image | bool

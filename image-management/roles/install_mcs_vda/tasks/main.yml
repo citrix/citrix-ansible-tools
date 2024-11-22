@@ -1,0 +1,60 @@
+---
+  - name: Fail if more than one exclusive tag is used to install a VDA
+    fail:
+      msg: "Error: Only one tag among {{ ansible_run_tags | intersect(vda_exclusive_tags) }} is allowed to install a VDA"
+    when: (ansible_run_tags | intersect(vda_exclusive_tags) | length) > 1
+    tags: always
+
+  - name: Fail if no tags are present to install a VDA
+    fail:
+      msg: "Error: No tags are present to install a VDA"
+    when: (ansible_run_tags | intersect(vda_exclusive_tags) | length) == 0
+    tags: always
+
+  - name: Fail if no tags are present for the VDA version
+    fail:
+      msg: "Error: No tags are present for the VDA version"
+    when: (ansible_run_tags | intersect(version_exclusive_tags) | length) == 0
+    tags: always
+
+  - name: Set an additional servervdi arg to install a single session VDA on a multi session OS
+    set_fact:
+      vda_installer_arguments: "{{ vda_installer_arguments + ' /servervdi' }}"
+    when:
+      - "'single_session_vda' in ansible_run_tags"
+    tags:
+      - win_2019_dc_vm
+      - win_2022_dc_vm
+
+  - name: Install MCS VDA
+    block:
+      - name: Install Citrix VDA on a Windows based Operating system
+        win_package:
+          path: "{{ vda_installer_path }}"
+          arguments: "{{ vda_installer_arguments }}"
+          creates_service: BrokerAgent
+          state: present
+          expected_return_code: [0, 3, 3010]
+        register: vda_install
+
+
+      - name: Reboot the machine
+        win_reboot:
+
+      - name: Set retry count
+        set_fact:
+          retry_count: 0
+          max_retries: 3
+    when: broker_agent_service_info.exists == false
+    tags: v2407
+
+  - name: Check if BrokerAgent service is running
+    ansible.windows.win_service_info:
+      name: BrokerAgent
+    register: broker_agent_service_info
+    tags: v2407
+
+  - include_role:
+      name: monitor_vda_installation
+    when: broker_agent_service_info.exists == false
+    tags: v2407

@@ -1,0 +1,16 @@
+---
+  - name: Test Connection
+    win_ping:
+    tags: v2407
+
+  - name: Create directory structure to store logs
+    ansible.windows.win_file:
+      path: C:\Logs
+      state: directory
+    tags: v2407
+
+  - name: Check if BrokerAgent service is running and set facts
+    ansible.windows.win_service_info:
+      name: BrokerAgent
+    register: broker_agent_service_info
+    tags: v2407
