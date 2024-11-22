@@ -1,0 +1,4 @@
+---
+
+dependencies:
+  - role: vda_installation_prerequisites

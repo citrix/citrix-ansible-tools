@@ -1,0 +1,52 @@
+---
+
+# Common
+azure_tags:
+  "task": "Citrix-Image-Management"
+
+# Resource Group
+azure_resource_group_name: citrix-image-management
+azure_resource_group_location: eastus
+
+# Virtual Network
+azure_virtual_network_name: citrix-image-management-vnet
+azure_virtual_network_address_prefixes: "10.0.0.0/16"
+
+# Subnet
+azure_subnet_name: citrix-image-management-subnet
+azure_subnet_address_prefix: "10.0.1.0/24"
+
+# Public IP
+azure_public_ip_name: citrix-image-mgmt-pip
+azure_public_ip_allocation_method: Static
+
+# Network Security Group
+azure_network_security_group_name: citrix-image-mgmt-nsg
+
+# Network Interface
+azure_network_interface_name: citrix-image-mgmt-nic
+
+# Virtual Machine
+azure_virtual_machine_name: ctx-img-mgmt-vm
+azure_virtual_machine_size: Standard_DS1_v2
+azure_virtual_machine_managed_disk_type: Standard_LRS
+azure_virtual_machine_os_disk_name: ctx-img-mgmt-os-disk
+azure_virtual_machine_image_version: latest # Needs to be fixed to a particular version instead of latest
+
+# Virtual Machine Script Extension
+vm_extension_settings: '{"fileUris": ["https://raw.githubusercontent.com/ansible/ansible-documentation/devel/examples/scripts/ConfigureRemotingForAnsible.ps1"],"commandToExecute": "powershell -ExecutionPolicy Unrestricted -File ConfigureRemotingForAnsible.ps1"}'
+
+# Azure Snapshot
+azure_snapshot_name: "ctx_img_snapshot"
+
+# Azure Compute Gallery
+azure_compute_gallery_name: "ctx_img_gallery"
+azure_compute_gallery_description: "Azure compute gallery to store the generated golden image"
+
+# Azure Image Definition
+azure_gallery_image_name: "ctx_img"
+azure_virtual_machine_os_type: "windows"
+azure_virtual_machine_os_state: "specialized"
+
+# Azure Image Version
+azure_gallery_image_version: "1.0.0" # Only digits and periods allowed. Format: <Major>.<Minor>.<Patch>

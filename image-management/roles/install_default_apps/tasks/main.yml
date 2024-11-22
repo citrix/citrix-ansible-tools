@@ -1,0 +1,16 @@
+---
+  - name: Install Google Chrome
+    ansible.windows.win_package:
+      path: "{{ chrome_installer_url }}"
+      arguments: "/silent /install"
+      creates_path: "{{ chrome_installation_path }}"
+    when: install_chrome | bool
+    tags: always
+
+  - name: Install Firefox
+    ansible.windows.win_package:
+      path: "{{ firefox_installer_url }}"
+      arguments: "-ms"
+      creates_path: "{{ firefox_installation_path }}"
+    when: install_firefox | bool
+    tags: always

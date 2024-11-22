@@ -1,0 +1,30 @@
+---
+  - name: Get the Public IP
+    azure_rm_publicipaddress_info:
+      resource_group: "{{ azure_resource_group_name }}"
+      name: "{{ azure_public_ip_name }}"
+    register: publicipaddresses
+    tags: always
+
+  - name: Setting the public ip address as an ansible fact
+    set_fact: publicipaddress="{{ publicipaddresses | json_query('publicipaddresses[0].ip_address')}}"
+    tags: always
+
+  - name: Checking if public ip address fact is defined
+    assert:
+      that:
+        - publicipaddress | length > 0
+      fail_msg: "Public IP address not found. Please check if the public IP address is available."
+      success_msg: "Public IP address found: {{ publicipaddress }}. Adding it to the inventory file."
+    tags: always
+
+  - name: Add windows vm ip to inventory file
+    add_host:
+      hostname: "{{ publicipaddress }}"
+      groupname: windows_vms
+    tags: always
+
+  - name: Debug message to check if host was added to the inventory or not
+    debug:
+      msg: "Host added: {{ groups['windows_vms'] }}" # Dynamically added. Use magic variables to access values
+    tags: always

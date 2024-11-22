@@ -1,0 +1,17 @@
+---
+
+# Winrm connection settings
+ansible_connection: winrm
+ansible_winrm_transport: ntlm
+ansible_winrm_server_cert_validation: ignore
+
+# XenDesktop
+xen_desktop_vda_setup_path: "C:\\ProgramData\\Citrix\\XenDesktopSetup\\XenDesktopVdaSetup.exe"
+
+# Google Chrome
+chrome_installer_url: "http://dl.google.com/chrome/install/chrome_installer.exe"
+chrome_installation_path: "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+
+# Firefox
+firefox_installer_url: "https://download.mozilla.org/?product=firefox-stub&os=win&lang=en-US"
+firefox_installation_path: "C:\\Program Files\\Mozilla Firefox\\firefox.exe"
