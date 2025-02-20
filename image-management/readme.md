@@ -1,10 +1,7 @@
-Citrix Image Pipeline using Ansible
-=================
+# Citrix Image Pipeline using Ansible
 
-**Description:** Citrix VDA Image Pipeline using Ansible
 
-**Owners**: sourav.samanta@cloud.com
-
+## Table of Contents
 - [Citrix Image Pipeline using Ansible](#citrix-image-pipeline-using-ansible)
 - [Setting up your Ansible Environment (Ref Link)](#setting-up-your-ansible-environment-ref-link)
 - [Copying folders from your local windows environment to the linux machine using SCP](#copying-folders-from-your-local-windows-environment-to-the-linux-machine-using-scp)
@@ -20,8 +17,7 @@ Citrix Image Pipeline using Ansible
 
 
 
-Setting up your Ansible Environment ([Ref Link](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip))
-=================
+## Setting up your Ansible Environment ([Ref Link](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip))
 1. Create an Azure VM with a Linux Environment (e.g. Ubuntu 22.04). Reference link: https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu
 2. Ensure that `python3` and `pip` are installed on the linux machine
    1. To verify if `python3` is already installed, execute the following command:
@@ -87,8 +83,7 @@ Setting up your Ansible Environment ([Ref Link](https://docs.ansible.com/ansible
    ```
 
 
-Copying folders from your local windows environment to the linux machine using SCP
-=================
+## Copying folders from your local windows environment to the linux machine using SCP
 
 Ansible playbooks can be copied over to the linux virtual machine you created, from your local windows machine, using the SCP command.
 
@@ -109,8 +104,7 @@ where:
 * `51.8.80.164` - Public IP of the linux machine
 * `/home/azureuser` - Linux path where the folder will be copied over
 
-Running the Ansible Playbooks:
-=================
+## Running the Ansible Playbooks:
 
 ### Create a Service Principal on Azure
 
@@ -176,8 +170,7 @@ Eg. `ansible-playbook citrix_image_management.yml --tags "win10_desktop,single_s
 More information about the tags can be found in the `ANSIBLE TAGS` section.
 
 
-Changes required for installing a Citrix VDA
-=================
+## Changes required for installing a Citrix VDA
 
 1. In `root_settings.yml`, set `install_mcs_vda` to `True`.
 2. We support creation of `8` types of Azure Windows based Virtual Machines, which include the `Server` OS, which is typically a `Multi Session OS`, and a `Desktop` based OS, which is a `Single Session OS`.
@@ -202,8 +195,7 @@ Changes required for installing a Citrix VDA
 Make sure to set the correct download links for the `Single Session VDA` and `Multi Session VDA` in the `vda_installer_path` variable in `root_settings.yml` file.
 
 
-Citrix Optimizers
-=================
+## Citrix Optimizers
 
 
 Once a `Virtual Delivery Agent (VDA)` has been installed on the Azure Windows Virtual Machine, if the `optimizer_image` role is set to `True`, the `Citrix Optimizer` script shall run, ensuring that the bloatware is removed from the the Windows Virtual Machine. The `Citrix Optimizer` folder comes with `templates`, which correspond to the template files used to run the Optimizer script. It is recommended that the template files should correspond with the type of Operating System VM being created prior. Furthermore, if the `template` files contain multiple `xml` files corresponding to the same OS based Virtual being installed, it's recommended that one uses the latest version of the Optimizer template file.
@@ -222,8 +214,7 @@ Following are the arguments you should set for the `citrix_optimizer_template_fi
 8. For `Windows 2022 Datacenter` machine: Set the `citrix_optimizer_template_file_name` argument as `Citrix_Windows_Server_2022_2009.xml`
 
 
-ANSIBLE TAGS
-=================
+## ANSIBLE TAGS
 
 
 1. Ansible Tags enable us to run only a particular task, instead of all the tasks in the entire playbook.
