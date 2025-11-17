@@ -1,0 +1,36 @@
+---
+  - name: Fail if more than one exclusive tag is used to create a VM
+    fail:
+      msg: "Error: Only one tag among {{ ansible_run_tags | intersect(virtual_machine_exclusive_tags) }} is allowed to create a VM"
+    when: (ansible_run_tags | intersect(virtual_machine_exclusive_tags) | length) > 1
+    tags: always
+
+  - name: Fail if no tags are present to create a VM
+    fail:
+      msg: "Error: No tags are present to create a VM"
+    when: (ansible_run_tags | intersect(virtual_machine_exclusive_tags) | length) == 0
+    tags: always
+
+  - name: Fail if more than one exclusive tag is used to install a VDA
+    fail:
+      msg: "Error: Only one tag among {{ ansible_run_tags | intersect(vda_exclusive_tags) }} is allowed to install a VDA"
+    when: (ansible_run_tags | intersect(vda_exclusive_tags) | length) > 1
+    tags: always
+
+  - name: Fail if no tags are present to install a VDA
+    fail:
+      msg: "Error: No tags are present to install a VDA"
+    when: (ansible_run_tags | intersect(vda_exclusive_tags) | length) == 0
+    tags: always
+
+  - name: Fail if more than one exclusive tag is used for the VDA version
+    fail:
+      msg: "Error: Only one tag among {{ ansible_run_tags | intersect(version_exclusive_tags) }} is allowed to specify the VDA version"
+    when: (ansible_run_tags | intersect(version_exclusive_tags) | length) > 1
+    tags: always
+
+  - name: Fail if no tags are present for the VDA version
+    fail:
+      msg: "Error: No tags are present for the VDA version"
+    when: (ansible_run_tags | intersect(version_exclusive_tags) | length) == 0
+    tags: always

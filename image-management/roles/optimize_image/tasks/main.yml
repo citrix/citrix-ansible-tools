@@ -8,13 +8,13 @@
   - name: Unzip the folder
     win_unzip:
       src: "{{ citrix_optimizer_zip_destination }}"
-      dest: "{{ cirix_optimizer_script_destination_folder }}"
+      dest: "{{ citrix_optimizer_script_destination_folder }}"
       delete_archive: yes
     tags: always
 
   - name: Run the citrix optimizer script
     ansible.windows.win_powershell: 
       script: "{{ citrix_optimizer_script_path }} {{ citrix_optimizer_script_arguments }}"
-      chdir: "{{ cirix_optimizer_script_destination_folder}}"
+      chdir: "{{ citrix_optimizer_script_destination_folder}}"
     register: optimizer_output
     tags: always

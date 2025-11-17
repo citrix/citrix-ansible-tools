@@ -1,46 +1,46 @@
 ---
-  - name: Run XenDesktopVDASetup
-    win_package:
-      path: "{{ xen_desktop_vda_setup_path }}"
-      expected_return_code: [0, 3, 3010]
-    register: xen_desktop_vda_setup
-    tags: v2407
+- name: Run XenDesktopVDASetup
+  win_package:
+    path: "{{ xen_desktop_vda_setup_path }}"
+    expected_return_code: [0, 3, 3010]
+  register: xen_desktop_vda_setup
+  tags: "{{ version_exclusive_tags }}"
 
-  - name: Reboot the machine
-    win_reboot:
-    tags: v2407
+- name: Reboot the machine
+  win_reboot:
+  tags: "{{ version_exclusive_tags }}"
 
-  - name: Delay of 10 seconds to wait for any service to start
-    pause:
-      seconds: 10
-    tags: v2407
+- name: Delay of 10 seconds to wait for any service to start
+  pause:
+    seconds: 10
+  tags: "{{ version_exclusive_tags }}"
 
-  - name: Check if BrokerAgent service is running
-    ansible.windows.win_service_info:
-      name: BrokerAgent
-    register: broker_agent_service_info
-    tags: v2407
+- name: Check if BrokerAgent service is running
+  ansible.windows.win_service_info:
+    name: BrokerAgent
+  register: broker_agent_service_info
+  tags: "{{ version_exclusive_tags }}"
 
-  - fail:
-      msg: "Installation attempt failed even after {{ max_retries|int + 1 }} retries. Please re-run the playbook to try again."
-    when:
-      - retry_count == max_retries
-      - broker_agent_service_info.exists == false
-    tags: v2407
+- fail:
+    msg: "Installation attempt failed even after {{ max_retries|int + 1 }} retries. Please re-run the playbook to try again."
+  when:
+    - retry_count == max_retries
+    - broker_agent_service_info.exists == false
+  tags: "{{ version_exclusive_tags }}"
 
-  - name: Update retry count
-    set_fact:
-      retry_count: "{{ retry_count|int + 1 }}"
-    when: broker_agent_service_info.exists == false
-    tags: v2407
+- name: Update retry count
+  set_fact:
+    retry_count: "{{ retry_count|int + 1 }}"
+  when: broker_agent_service_info.exists == false
+  tags: "{{ version_exclusive_tags }}"
 
-  - name: Debug message to check if the XenDesktopVDASetup installer needs to be run again
-    debug:
-      msg: "Broker Agent service has not yet started. Running the installer again to continue the installation."
-    when: broker_agent_service_info.exists == false
-    tags: v2407
+- name: Debug message to check if the XenDesktopVDASetup installer needs to be run again
+  debug:
+    msg: "Broker Agent service has not yet started. Running the installer again to continue the installation."
+  when: broker_agent_service_info.exists == false
+  tags: "{{ version_exclusive_tags }}"
 
-  - include_role:
-      name: monitor_vda_installation
-    when: broker_agent_service_info.exists == false
-    tags: v2407
+- include_role:
+    name: monitor_vda_installation
+  when: broker_agent_service_info.exists == false
+  tags: "{{ version_exclusive_tags }}"

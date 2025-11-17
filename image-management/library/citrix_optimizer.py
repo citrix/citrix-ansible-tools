@@ -36,12 +36,12 @@ options:
 '''
 
 EXAMPLES = r'''
-- name: Optimizer module
+  - name: Optimizer module
     citrix_optimizer:
-        optimizer_zip_url: "{{ citrix_optimizer_zip_url }}"
-        template_file_name: "{{citrix_optimizer_template_file_name}}"
-        force: True
-        retain_logs: True
+      optimizer_zip_url: "{{ citrix_optimizer_zip_url }}"
+      template_file_name: "{{citrix_optimizer_template_file_name}}"
+      force: True
+      retain_logs: True
 '''
 
 RETURN = r'''
