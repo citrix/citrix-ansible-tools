@@ -1,7 +1,10 @@
-# Citrix Image Pipeline using Ansible
+Citrix Image Pipeline using Ansible
+=================
 
+**Description:** Citrix VDA Image Pipeline using Ansible
 
-## Table of Contents
+**Owners**: sourav.samanta@cloud.com
+
 - [Citrix Image Pipeline using Ansible](#citrix-image-pipeline-using-ansible)
 - [Setting up your Ansible Environment (Ref Link)](#setting-up-your-ansible-environment-ref-link)
 - [Copying folders from your local windows environment to the linux machine using SCP](#copying-folders-from-your-local-windows-environment-to-the-linux-machine-using-scp)
@@ -17,7 +20,8 @@
 
 
 
-## Setting up your Ansible Environment ([Ref Link](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip))
+Setting up your Ansible Environment ([Ref Link](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip))
+=================
 1. Create an Azure VM with a Linux Environment (e.g. Ubuntu 22.04). Reference link: https://learn.microsoft.com/en-us/azure/virtual-machines/linux/quick-create-portal?tabs=ubuntu
 2. Ensure that `python3` and `pip` are installed on the linux machine
    1. To verify if `python3` is already installed, execute the following command:
@@ -83,7 +87,8 @@
    ```
 
 
-## Copying folders from your local windows environment to the linux machine using SCP
+Copying folders from your local windows environment to the linux machine using SCP
+=================
 
 Ansible playbooks can be copied over to the linux virtual machine you created, from your local windows machine, using the SCP command.
 
@@ -104,7 +109,8 @@ where:
 * `51.8.80.164` - Public IP of the linux machine
 * `/home/azureuser` - Linux path where the folder will be copied over
 
-## Running the Ansible Playbooks:
+Running the Ansible Playbooks:
+=================
 
 ### Create a Service Principal on Azure
 
@@ -141,7 +147,7 @@ where:
 
 ### VDA Versions supported
 
-Currently, we are only supporting the VDA Version `v2407`. 
+Currently, we support the VDA Versions `v2407`, `v2411`, `v2503`, and `v2507`.
 
 
 ### Running the playbook
@@ -170,7 +176,8 @@ Eg. `ansible-playbook citrix_image_management.yml --tags "win10_desktop,single_s
 More information about the tags can be found in the `ANSIBLE TAGS` section.
 
 
-## Changes required for installing a Citrix VDA
+Changes required for installing a Citrix VDA
+=================
 
 1. In `root_settings.yml`, set `install_mcs_vda` to `True`.
 2. We support creation of `8` types of Azure Windows based Virtual Machines, which include the `Server` OS, which is typically a `Multi Session OS`, and a `Desktop` based OS, which is a `Single Session OS`.
@@ -187,7 +194,7 @@ More information about the tags can be found in the `ANSIBLE TAGS` section.
 5. The important point to note is that the `Single Session OS` based VMs support only the installation of `Single Session VDAs`. `Multi Session OS` based VMs, except for the Datacenter based Operating Systems, support the installation of just the `Multi Session VDAs.`
 6. The `Windows Server 2019 Datacenter` and `Windows Server 2022 Datacenter` can support the installation of a `Multi Session VDA`, as well as the `Single Session VDA`. These Operating Systems have the ability to act as a Single Session `Desktop` OS, which allows the installation of a `Single Session VDA`.
 7. Make sure to use the `single_session_vda` tag while running the Ansible playbook while installing the Single Session VDA, and for installing the Multi Session VDA, make sure to use the `multi_session_vda` tag while running the Ansible playbook. Check out the `ANSIBLE TAGS` section to learn more about these tags.
-8.  Currently, we only support the VDA Version v2407, so make sure to specify the `v2407` tag while running the Ansible playbook. Check out the `ANSIBLE TAGS` section to learn more about these tags.
+8.  Currently, we support the VDA Versions `v2407`, `v2411`, `v2503`, and `v2507`, so make sure to specify one of the `v2407`, `v2411`, `v2503`, or `v2507` tag while running the Ansible playbook. Check out the `ANSIBLE TAGS` section to learn more about these tags.
 
 
 ---------------Important Note for the Single Session VDA and Multi Session VDA---------------
@@ -195,7 +202,8 @@ More information about the tags can be found in the `ANSIBLE TAGS` section.
 Make sure to set the correct download links for the `Single Session VDA` and `Multi Session VDA` in the `vda_installer_path` variable in `root_settings.yml` file.
 
 
-## Citrix Optimizers
+Citrix Optimizers
+=================
 
 
 Once a `Virtual Delivery Agent (VDA)` has been installed on the Azure Windows Virtual Machine, if the `optimizer_image` role is set to `True`, the `Citrix Optimizer` script shall run, ensuring that the bloatware is removed from the the Windows Virtual Machine. The `Citrix Optimizer` folder comes with `templates`, which correspond to the template files used to run the Optimizer script. It is recommended that the template files should correspond with the type of Operating System VM being created prior. Furthermore, if the `template` files contain multiple `xml` files corresponding to the same OS based Virtual being installed, it's recommended that one uses the latest version of the Optimizer template file.
@@ -214,7 +222,8 @@ Following are the arguments you should set for the `citrix_optimizer_template_fi
 8. For `Windows 2022 Datacenter` machine: Set the `citrix_optimizer_template_file_name` argument as `Citrix_Windows_Server_2022_2009.xml`
 
 
-## ANSIBLE TAGS
+ANSIBLE TAGS
+=================
 
 
 1. Ansible Tags enable us to run only a particular task, instead of all the tasks in the entire playbook.
@@ -260,8 +269,12 @@ Following are the arguments you should set for the `citrix_optimizer_template_fi
    Note: If one tries to pass multiple tags from this same group, Ansible will throw an error specifying that only one of these tags need to be declared.
 
 
-6. Currently, we only support `v2407` tag, which is associated with the VDA Version you want to install.
-   Note: If this tag isn't declared, and the `install_mcs_vda` tag is set to `true`, then Ansible will throw an error, specifying that the tag needs to be declared.
+6. Currently, we support `v2407`, `v2411`, `v2503`, and `v2507` tags, which are associated with the VDA Version you want to install.
+   `v2411`, `v2503`, and `v2507` support an additional installation of `Citrix VDA Upgrade Agent` in the Citrix VDA Image we create.
+   Only one of these tags should be used  at a time to create a VDA.
+
+
+   Note: If one tries to pass multiple tags from this same group, Ansible will throw an error specifying that only one of these tags need to be declared.
 
 
 7. Similarly, if the `create_azure_windows_vm` is set to true, and no tag is declared from the `virtual_machine_exclusive_tags` list, Ansible throws an error, specifying that one tag needs to be specified from the list of tags. 

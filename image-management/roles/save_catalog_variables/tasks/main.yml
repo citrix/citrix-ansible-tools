@@ -1,0 +1,5 @@
+  - name: Save the machine catalog variables inside a local file
+    copy:
+      content: "Snapshot:{{ azure_snapshot_name }}\nResourceGroup:{{ azure_resource_group_name }}"
+      dest: catalog_vars.txt
+    tags: always

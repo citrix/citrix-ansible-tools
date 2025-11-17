@@ -13,7 +13,20 @@
       - office_11_vm
       - win_2019_dc_vm
       - win_2022_dc_vm
+    vda_exclusive_tags:
+      - single_session_vda
+      - multi_session_vda
+    version_exclusive_tags:
+      - v2407
+      - v2411
+      - v2503
+      - v2507
+    vda_upgrade_agent_tags:
+      - v2411
+      - v2503
+      - v2507
   roles:
+    - check_ansible_tags
     - role: create_azure_windows_vm
       when: create_azure_windows_vm | bool
     - azure_add_host_to_inventory
@@ -22,11 +35,18 @@
   hosts: windows_vms
   gather_facts: False
   vars:
-    vda_exclusive_tags:
-      - single_session_vda
-      - multi_session_vda
     version_exclusive_tags:
       - v2407
+      - v2411
+      - v2503
+      - v2507
+    vda_upgrade_agent_tags:
+      - v2411
+      - v2503
+      - v2507
+    azure_vm_tags:
+      - win_2019_dc_vm
+      - win_2022_dc_vm
   roles:
     - role: install_mcs_vda
       when: install_mcs_vda | bool
@@ -37,6 +57,18 @@
 - name: Generate Golden Image
   hosts: localhost
   connection: local
+  vars:
+    version_exclusive_tags:
+      - v2407
+      - v2411
+      - v2503
+      - v2507
+    vda_upgrade_agent_tags:
+      - v2411
+      - v2503
+      - v2507
   roles:
     - role: generate_golden_image
       when: generate_golden_image | bool
+    - role: save_catalog_variables
+      when: save_catalog_variables | bool

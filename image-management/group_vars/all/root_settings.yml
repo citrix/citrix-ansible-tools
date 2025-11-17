@@ -11,6 +11,7 @@ optimize_image: True
 install_chrome: True
 install_firefox: True
 generate_golden_image: True
+save_catalog_variables: True
 
 # Installation URLs
 
@@ -21,9 +22,9 @@ vda_installer_arguments: "/mastermcsimage /components vda /enable_hdx_ports /ena
 # Citrix Optimizer
 citrix_optimizer_zip_url: "" # URL to download the Citrix Optimizer zip folder
 citrix_optimizer_zip_destination: "C:\\CitrixOptimizer.zip"
-cirix_optimizer_script_destination_folder: "C:\\CitrixOptimizer"
+citrix_optimizer_script_destination_folder: "C:\\CitrixOptimizer"
 citrix_optimizer_template_file_name: "Citrix_Windows_Server_2019_1809.xml" # E.g. Citrix_Windows_Server_2019_1809.xml
-citrix_optimizer_script_path: "{{ cirix_optimizer_script_destination_folder}}\\CtxOptimizerEngine.ps1"
-citrix_optimizer_template_file_path: "{{ cirix_optimizer_script_destination_folder}}\\Templates\\{{ citrix_optimizer_template_file_name }}"
+citrix_optimizer_script_path: "{{ citrix_optimizer_script_destination_folder}}\\CtxOptimizerEngine.ps1"
+citrix_optimizer_template_file_path: "{{ citrix_optimizer_script_destination_folder}}\\Templates\\{{ citrix_optimizer_template_file_name }}"
 citrix_optimizer_running_mode: "execute"
 citrix_optimizer_script_arguments: "-Source {{ citrix_optimizer_template_file_path }} -Mode {{ citrix_optimizer_running_mode }}"
